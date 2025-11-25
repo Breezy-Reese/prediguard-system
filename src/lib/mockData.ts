@@ -1,12 +1,4 @@
-export interface Alert {
-  id: string;
-  severity: "critical" | "high" | "medium" | "low";
-  title: string;
-  description: string;
-  timestamp: Date;
-  source: string;
-  status: "active" | "investigating" | "resolved";
-}
+import { Alert } from "./types";
 
 export interface HoneypotLog {
   id: string;
@@ -37,36 +29,40 @@ export const mockAlerts: Alert[] = [
     severity: "critical",
     title: "Brute Force Attack Detected",
     description: "Multiple failed login attempts from IP 192.168.1.45",
-    timestamp: new Date(Date.now() - 5 * 60000),
+    timestamp: new Date(Date.now() - 5 * 60000).toISOString(),
     source: "Honeypot Login Portal",
-    status: "active"
+    status: "active",
+    created_at: new Date(Date.now() - 5 * 60000).toISOString()
   },
   {
     id: "2",
     severity: "high",
     title: "SQL Injection Attempt",
     description: "Malicious SQL query detected on /api/users endpoint",
-    timestamp: new Date(Date.now() - 15 * 60000),
+    timestamp: new Date(Date.now() - 15 * 60000).toISOString(),
     source: "Honeypot API",
-    status: "investigating"
+    status: "investigating",
+    created_at: new Date(Date.now() - 15 * 60000).toISOString()
   },
   {
     id: "3",
     severity: "medium",
     title: "Suspicious Port Scan",
     description: "Sequential port scanning detected from 10.0.0.23",
-    timestamp: new Date(Date.now() - 30 * 60000),
+    timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
     source: "Network Monitor",
-    status: "investigating"
+    status: "investigating",
+    created_at: new Date(Date.now() - 30 * 60000).toISOString()
   },
   {
     id: "4",
     severity: "high",
     title: "Privilege Escalation Attempt",
     description: "Unauthorized access to admin endpoints",
-    timestamp: new Date(Date.now() - 45 * 60000),
+    timestamp: new Date(Date.now() - 45 * 60000).toISOString(),
     source: "Honeypot Admin Panel",
-    status: "resolved"
+    status: "resolved",
+    created_at: new Date(Date.now() - 45 * 60000).toISOString()
   }
 ];
 

@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, AlertTriangle, Info } from "lucide-react";
-import { Alert } from "@/lib/mockData";
+import { Alert } from "@/lib/types";
 
 interface AlertCardProps {
   alert: Alert;
