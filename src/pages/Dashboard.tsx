@@ -1,9 +1,10 @@
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { RiskMeter } from "@/components/RiskMeter";
 import { AlertCard } from "@/components/AlertCard";
 import { mockSystemStatus, threatTimelineData, attackTypesData } from "@/lib/mockData";
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Activity, Shield, Target, Zap } from "lucide-react";
+import { Activity, Shield, Target, Zap, Play } from "lucide-react";
 import { useState, useEffect } from "react";
 import { api, subscribeToAlerts, subscribeToHoneypotEvents, subscribeToPredictions } from "@/lib/api";
 import { Alert, HoneypotEvent, Prediction } from "@/lib/types";
@@ -16,6 +17,7 @@ export default function Dashboard() {
   const [honeypotEvents, setHoneypotEvents] = useState<HoneypotEvent[]>([]);
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [demoRunning, setDemoRunning] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -72,6 +74,56 @@ export default function Dashboard() {
     }
   };
 
+  const runDemoAttack = async () => {
+    setDemoRunning(true);
+    toast({
+      title: 'Demo Attack Sequence Started',
+      description: 'Simulating attack progression through all honeypot endpoints...',
+    });
+
+    try {
+      // Attack 1: Brute force login attempt
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      toast({
+        title: '🎯 Step 1: Login Attack',
+        description: 'Simulating brute force login attempts...',
+      });
+      await api.testHoneypotLogin('admin', 'password123');
+
+      // Attack 2: SQL Injection on API
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      toast({
+        title: '🎯 Step 2: API Attack',
+        description: 'Simulating SQL injection on API endpoint...',
+      });
+      await api.testHoneypotAPI('users?id=1 OR 1=1');
+
+      // Attack 3: Database exploit
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      toast({
+        title: '🎯 Step 3: Database Attack',
+        description: 'Simulating database exploitation attempt...',
+      });
+      await api.testHoneypotDB('SELECT * FROM users; DROP TABLE users;');
+
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      toast({
+        title: '✅ Demo Complete',
+        description: 'Attack sequence completed. Check alerts and predictions!',
+        variant: 'default',
+      });
+    } catch (error) {
+      console.error('Demo attack error:', error);
+      toast({
+        title: 'Demo Error',
+        description: 'Failed to complete demo sequence',
+        variant: 'destructive',
+      });
+    } finally {
+      setDemoRunning(false);
+    }
+  };
+
   const activeAlerts = alerts.filter(a => a.status === 'active');
   const avgThreatScore = honeypotEvents.length > 0
     ? Math.round(honeypotEvents.reduce((acc, e) => acc + e.threat_score, 0) / honeypotEvents.length)
@@ -85,9 +137,19 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Command Center</h1>
-        <p className="text-muted-foreground">Real-time threat intelligence and predictive analytics</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Command Center</h1>
+          <p className="text-muted-foreground">Real-time threat intelligence and predictive analytics</p>
+        </div>
+        <Button 
+          onClick={runDemoAttack} 
+          disabled={demoRunning}
+          className="gap-2"
+        >
+          <Play className="h-4 w-4" />
+          {demoRunning ? 'Running Demo...' : 'Run Demo Attack'}
+        </Button>
       </div>
 
       {/* Stats Grid */}
